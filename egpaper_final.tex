@@ -1,0 +1,316 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Include other packages here, before hyperref.
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[breaklinks=true,bookmarks=false]{hyperref}
+
+\cvprfinalcopy % *** Uncomment this line for the final submission
+
+\def\cvprPaperID{****} % *** Enter the CVPR Paper ID here
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+%\ifcvprfinal\pagestyle{empty}\fi
+\setcounter{page}{4321}
+\begin{document}
+
+%%%%%%%%% TITLE
+\title{Recent Advances on Traveling Salesman Problem
+\thanks{ This work was completed as an artificial intelligence course project at Xi'an Jiaotong University. Permission to copy without all or part of this material is granted provided that the copies are not made or distributed for direct commercial advantage.}
+}
+
+\author{Yihui He\\
+Xi'an Jiaotong University\\
+Xi'an, China\\
+{\tt\small heyihui@stu.xjtu.edu.cn}
+% For a paper whose authors are all at the same institution,
+% omit the following lines up until the closing ``}''.
+% Additional authors and addresses can be added with ``\and'',
+% just like the second author.
+% To save space, use either the email address or home page, not both
+\and
+Ming Xiang
+\thanks{corresponding author.}\\
+Xi'an Jiaotong University\\
+Xi'an China\\
+{\tt\small mxiang@mail.xjtu.edu.cn}
+}
+
+\maketitle
+%\thispagestyle{empty}
+
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+With applications to many disciplines, the traveling salesman problem (TSP) is a classical computer science optimization problem with applications to industrial engineering, theoretical computer science, bioinformatics, and several other disciplines. In recent years, there have been a
+plethora of novel approaches for approximate solutions ranging from simplistic greedy to cooperative distributed algorithms derived from artificial intelligence. In this paper,
+we perform an evaluation and analysis of cornerstone algorithms for the metric TSP. We evaluate the nearest neighbor, greedy, Christofides, and genetic algorithms. We use
+several datasets as input for the algorithms including several small datasets, two medium-sized datasets representing
+cities in the United States, and a synthetic dataset consisting
+of 1,000 cities to test algorithm scalability. We discover that
+the nearest neighbor and greedy algorithms efficiently calculate solutions for smaller datasets. Christofides has the best
+performance for both optimality and runtime for medium
+to large datasets. Genetic algorithms can occasionally find
+near-optimal solutions but have no guarantee and generally have longer runtimes.
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+\section{Introduction}
+Known to be NP-hard, the traveling salesman problem (TSP) was first formulated in 1930 and is one of the most studied optimization problems to date [14]. The problem is as follows: given a list of cities and a distance between each pair of cities, find the shortest possible path that visits every city exactly once and returns to the starting city. The TSP has broad applications including: shortest-path
+for lasers to sculpt microprocessors and delivery logistics for mail services, to name a few.
+
+The TSP is an area of active research. In fact, several
+variants have been derived from the original TSP. In this
+paper, we focus on the metric TSP. In the metric TSP, all
+distances between cities satisfy the triangle inequality. That
+is, for three cities, A, B, and C:
+\begin{equation}
+	dist(A, C) < dist(A, B) + dist(B, C)
+\end{equation}
+This simplification allows us to survey several cornerstone algorithms without introducing complex scenarios, specifically
+for Christofides. The remainder of this paper is organized
+as follows. In Section 2, we briefly review the first solutions
+and survey modern approaches and variants to the TSP. We
+describe the algorithms used in our experiment and outline
+key implementation details in Section 3. A description of
+the benchmark datasets and results of the experiment are
+detailed in Section 4. A discussion in Section 5 explains the
+findings and compares the performance of the algorithms.
+We then conclude and describe future work in Section 6.
+
+\section{Background}
+An example TSP is illustrated in Figure \ref{fig:egtsp}. The input is
+shown in subfigure (a) as a collection of cities in the twodimensional space. This input can be represented as a distance matrix for each pair of cities or as a list of points
+denoting the coordinate of each city. In the latter method,
+distances are calculated using Euclidean geometry. A nonoptimal tour is shown in subfigure (b). Although not shown
+in the figure, each edge will have some non-negative edge
+weight denoting the distance between two nodes or cities.
+Due to the computational complexity of the TSP, it may be
+necessary to approximate the optimal solution. The optimal
+tour is shown in subfigure (c). For small graphs, it may be
+possible to perform an exhaustive search to obtain the optimal solution. However, as the number of cities increases, so
+does the solutions space, problem complexity, and running
+time.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth]{egtsp}
+\caption{}
+\label{fig:egtsp}
+\end{figure}
+
+Figure 2 lists the number of edges and total possible num-
+ber of tours for a specific dataset size. The number of possi-
+ble tours is (n − 1)!/2 since the same tour, with start point
+X and Y appears twice: once with X as the start node and
+once with Y as the start node.
+
+Mathematical problems similar to the Traveling salesman
+problem date back to the 18th century. The basis of the
+problem was first discussed by Irish mathematician William
+Rowan Hamilton and by a British mathematician Thomas
+Penyngton Kirkman.
+
+The TSP problem itself was first formulated in the 1930s
+by Karl Menger in Vienna and Harvard. It was later studied
+by statisticians Mahalanobis, Jessen, Gosh, and Marks for
+agricultural applications. The problem was then popular-
+ized by mathematician Merill Flood with his colleagues at
+Research and Development Corporation in the 1940s. By
+the mid-1950s, solutions for TSP began to appear. The first
+solution was published by Dantzig, Fulkerson, and Johnson
+using a dataset of 49 cities. The progression of solutions is
+shown in Figure 3. In 1972, Richard M. Karp proved that
+the Hamiltonian cycle problem was NP-Complete, which
+proves that the TSP is NP-Hard.
+
+In modern day, the traveling salesman problem has a va-
+riety of applications to numerous fields. Examples among
+these applications include genome sequencing, air traffic con-
+trol, supplying manufacturing lines, and optimization.
+
+\subsection{TSP Variants}
+Several variants of the original TSP exist. Some of these
+variants differ in their representation of cities and some differ
+by the constraints placed on city distances. We describe the
+Euclidean, Graphic, and Asymmetric TSP variants in this
+section.
+\subsubsection{Euclidean TSP}
+In the Euclidean TSP, the input is given as a list of coor-
+dinates describing the location of each city in R 2 [1]. It is
+possible to extend this into higher dimensions as well. The
+alternative to giving a list of city coordinates is to give a
+distance/adjacency matrix describing the distances between
+each city pair. It is possible to derive the distance ma-
+trix given the city coordinates using Euclidean geometry.
+However, given the distance matrix, inferring the coordi-
+nates is not as straightforward and requires computation of
+a Gramian matrix and application of several matrix decom-
+position methods
+\
+\subsubsection{Graphic TSP}
+In recent years, the graphic TSP has attracted attention
+from the research community. The graphic TSP problem
+asks for the shortest tour that visits each vertex at least
+once. The current best approximation algorithm returns a
+solution within 13/9 ≈ 1.444 of the optimal [16]. For the
+past 30 years, Christofides had been the leading algorithm
+with a 1.5 approximation. Although the 13/9 approximation
+is for a TSP variant, it is an important milestone for TSP
+approximations nonetheless.
+
+\subsubsection{Asymmetric TSP}
+All TSP variants described thus far have assumed an undi-
+rected graph, resulting in cost(A, B) = cost(B, A). The
+asymmetric TSP introduces directed edges. As a conse-
+quence, algorithms with assumptions about reflexive dis-
+tances may fail when cost(A, B) 6 = cost(B, A). Real world
+applications of this includes roads and highways – specif-
+ically the case of one-way streets, detours, and alternate
+routes. Additionally when modeling vehicle energy usage,
+the geographical topology makes traveling uphill cheaper
+than downhill despite traveling between the same two points.
+
+\subsection{Related Heuristics}
+In this section, we briefly summarize current approaches
+for the metric TSP. We describe the 2-approximation algo-
+rithm and survey an advanced technique based on artificial
+intelligence.
+\subsubsection{2-Approximation Algorithm}
+A simple two-approximation solution can be achieved by
+constructing a minimum spanning tree (MST) for the input
+TSP graph and creating a list of vertices (no duplicates)
+from a pre-order walk of the MST [20]. This list of vertices
+becomes a Hamiltonian cycle and is a solution to the TSP.
+This algorithm completes in polynomial time and is is guar-
+anteed to return a two-approximation solution (see [20] for
+proof).
+
+\subsubsection{Ant-Colony Approach}
+Classified under the umbrella of nature-inspired algorithms,
+the ant colony system (ACS) is a distributed swarm intelli-
+gence algorithm that has a set of cooperating agents called
+ants that attempt to solve the TSP. This method attempts
+to mimic how ants find the shortest path from their home to
+food in real life. In ACS, ants communicate by depositing
+pheromones on the graph edges as they build TSP solu-
+tions [7]. Over time, the shorter paths build larger amounts
+of pheromones. The solution to the TSP is the path with
+highest pheromone levels which visit every city.
+
+This algorithm is able to run on both symmetric and
+asymmetric TSPs. For the symmetric TSP with 170 cities
+or less, the ACS algorithm finds the optimum solution. For
+the asymmetric TSP with 170 cities or less, it found a so-
+lution within 0.40% of the optimal and outperforms genetic
+algorithm approaches [7].
+%-------------------------------------------------------------------------
+\section{Algorithms}
+e now move to a discussion of the algorithms used in
+our evaluation. First, we describe the traditional nearest
+neighbor and greedy approaches in Sections 3.1 and 3.2. We
+then outline Christofides algorithm in Section 3.3 and then
+discuss the genetic algorithm in Section 3.4.
+
+\subsection{Greedy Algorithm}
+The greedy heuristic is based on Kruskal’s algorithm to
+give an approximate solution to the TSP [13]. The algorithm
+forms a tour of the shortest route and can be constructed if
+and only if:
+The edges of the tour must not form a cycle unless
+the selected number of edges is equal to the number of
+vertices in the graph.
+The selected edge (before being appended to the tour)
+does not increase the degree of any node to be more
+than 2.
+The algorithm begins by sorting all edges from least weight
+to most heavily weighted. After the edges are sorted, the
+least heavily-weighted edge is selected and it is added to the
+tour if it does not violate the above conditions. The algo-
+rithm continues by selecting the next least-cost edge and
+adding it to the tour. This process is repeated until all ver-
+tices can be reached by the tour. The result is a minimum
+spanning tree and is a solution for the TSP. The runtime for
+the greedy algorithm is O(n 2 log(n)) and generally returns a
+solution within 15-20\% of the Held-Karp lower bound [17].
+
+\subsection{Genetic Algorithm}
+Genetic algorithms (GA) are search heuristics that at-
+tempt to mimic natural selection for many problems in op-
+timization and artificial intelligence [4]. In a genetic algo-
+rithm, a population of candidate solutions is evolved over
+time towards better solutions. These evolutions generally
+occur through mutations, randomization, and recombina-
+tion. We define a fitness function to differentiate between
+better and worse solutions. Solutions, or individuals, with
+higher fitness scores are more likely to survive over time.
+The final solution is found if the population converges to a
+solution within some threshold. However, great care must
+be taken to avoid being trapped at local optima.
+
+We will now apply a genetic algorithm to the traveling
+salesman problem [2]. We define a fitness function F as the
+length of the tour. Supposed we have an ordering of the
+cities A = {x 1 , x 2 , ..., x n } where n is the number of cities.
+The fitness score for the TSP becomes the cost of the tour
+d(x, y) denote the distance from x to y.
+\begin{equation}
+	F(A) =\sum_{i=0}^{n-1} d(x_i , x_{i+1}) + d(x_n , x_0 )
+\end{equation}
+The genetic algorithm begins with an initial, P 0 , random
+population of candidate solutions. That is, we have a set of
+paths that may or may not be good solutions. We then move
+forward one time step. During this time step, we perform a
+set of probabilistic and statistical methods to select, mutate,
+and produce an offspring population, P 1 , with traits similar
+to those of the best individuals (with the highest fitness)
+from P 0 . We then repeat this process until our population
+becomes homogeneous.
+
+The running time of genetic algorithms is variable and de-
+pendent on the problem and heuristics used. However, for
+each individual in the population, we require O(n) space for
+storage of the path. For genetic crossover, the space require-
+ment remains O(n). The best genetic algorithms can find
+solutions within 2% of the optimal tour for certain graphs
+[10].
+
+\section{Implementation}
+\subsection{Greedy Algorithm}
+The greedy solution to TSP differs from the nearest neigh-
+bor heuristic because it uses a Kruskal’s approach to the
+problem. Instead of starting at a random node and building
+a tour using the nearest neighbor of the selected node, the
+Greedy algorithm selects the least weighted edge and adds
+it to the tour regardless of if it is connected or disconnected
+to the current tour.
+
+The Greedy algorithm was implemented in Java and is
+available on Github 1 . The program reads the input datasets
+from the files and constructs a distance matrix correspond-
+ing to distances between cities. The algorithm first sorts
+all of the weights of the edges from lowest to most heav-
+ily weighted, and selects the lightest edge to begin the tour
+with. It then selects the next lightest edge and adds it to
+the tour as long as it doesn’t create a cycle or make any
+vertices have a degree of more than 2. The algorithm keeps
+performing the loop until the number of edges in the tour is
+equal to the number of vertices in the graph. It then prints
+out all of the edges added to the tour, the running time of
+the operation, and returns the path cost of the tour.
+
+{\small
+\bibliographystyle{ieee}
+\bibliography{egbib}
+}
+
+\end{document}
