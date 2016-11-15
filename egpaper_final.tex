@@ -243,6 +243,29 @@ spanning tree and is a solution for the TSP. The runtime for
 the greedy algorithm is O(n 2 log(n)) and generally returns a
 solution within 15-20\% of the Held-Karp lower bound [17].
 
+\subsection{2-opt Algorithm}
+In optimization, 2-opt is a simple local search algorithm first proposed
+by Croes in 1958 for solving the traveling salesman problem\cite{croes1958method}.
+The main idea behind it is to take a route that crosses over itself and reorder it so that it does not.
+A complete 2-opt local search will compare every possible valid combination of the swapping mechanism. This technique can be applied to the travelling salesman problem as well as many related problems. These include the vehicle routing problem (VRP) as well as the capacitated VRP, which require minor modification of the algorithm.
+This pseudocode is shown below.
+\begin{lstlisting}
+repeat until no improvement is made {
+start_again:
+best_distance = calculateTotalDistance(existing_route)
+for (i = 0; i < number of nodes eligible to be swapped - 1; i++) {
+   for (k = i + 1; k < number of nodes eligible to be swapped; k++) {
+       new_route = 2optSwap(existing_route, i, k)
+       new_distance = calculateTotalDistance(new_route)
+       if (new_distance < best_distance) {
+	   existing_route = new_route
+	   goto start_again
+       }
+   }
+}
+}
+\end{lstlisting}
+
 \subsection{Genetic Algorithm}
 Genetic algorithms (GA) are search heuristics that at-
 tempt to mimic natural selection for many problems in op-
