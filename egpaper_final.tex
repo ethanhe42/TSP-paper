@@ -26,7 +26,7 @@
 \begin{document}
 
 %%%%%%%%% TITLE
-\title{Recent Advances on Traveling Salesman Problem
+\title{A Survey on Solutions for Traveling Salesman Problem
 \thanks{ This work was completed as an artificial intelligence course project at Xi'an Jiaotong University. Permission to copy without all or part of this material is granted provided that the copies are not made or distributed for direct commercial advantage.}
 }
 
@@ -59,7 +59,7 @@ several datasets as input for the algorithms including a small dataset, a medium
 cities in the United States, and a synthetic dataset consisting of 200 cities to test algorithm scalability. We discover that
 the greedy and 2-opt algorithms efficiently calculate solutions for smaller datasets. Genetic algorithm has the best
 performance for optimality for medium
-to large datasets, but generally have longer runtime. Our implementations are public available \footnote{https://github.com/yihui-he/TSP}.
+to large datasets, but generally have longer runtime. Our implementations will be publicly available \footnote{https://github.com/yihui-he/TSP}.
 \end{abstract}
 
 %%%%%%%%% BODY TEXT
@@ -96,7 +96,7 @@ time.
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{egtsp}
+\includegraphics[width=.7\linewidth]{egtsp}
 \caption{}
 \label{fig:egtsp}
 \end{figure}
@@ -118,15 +118,31 @@ Research and Development Corporation in the 1940s. By
 the mid-1950s, solutions for TSP began to appear. The first
 solution was published by Dantzig, Fulkerson, and Johnson
 using a dataset of 49 cities. The progression of solutions is
-shown in Figure \ref{fig:hist}. In 1972, Richard M. Karp proved that
+shown in Table \ref{fig:hist}. In 1972, Richard M. Karp proved that
 the Hamiltonian cycle problem was NP-Complete, which
 proves that the TSP is NP-Hard.
-\begin{figure*}
-\centering
-\includegraphics[width=.6\linewidth]{hist}
+\begin{table*}[]
+	\centering
 \caption{history of solutions for TSP\cite{haqueempirical}}
 \label{fig:hist}
-\end{figure*}
+	\begin{tabular}{l|l|l}
+		\hline
+		Year & Research Team                                    & Cities \\ \hline
+		1954 & G. Dantzig, R. Fulkerson, and S. Johnson         & 49     \\ \hline
+		1971 & M. Held and R.M. Karp                            & 64     \\ \hline
+		1975 & P.M. Camerini, L. Fratta, and F. Maffioli        & 67     \\ \hline
+		1977 & M. Grotschel                                     & 120    \\ \hline
+		1980 & H. Crowder and M.W. Padberg                      & 318    \\ \hline
+		1987 & M. Padberg and G. Rinaldi                        & 532    \\ \hline
+		1987 & M. Grotschel and O. Holland                      & 666    \\ \hline
+		1987 & M. Padberg and G. Rinaldi                        & 2,392  \\ \hline
+		1994 & D. Applegate, R. Bixby, V. Chavatal, and W. Cook & 7,397  \\ \hline
+		1998 & D. Applegate, R. Bixby, V. Chavatal, and W. Cook & 13,509 \\ \hline
+		2004 & D. Applegate, R. Bixby, V. Chavatal, and W. Cook & 24,978 \\ \hline
+		2006 & D. Applegate, R. Bixby, V. Chavatal, and W. Cook & 85,900\\ \hline
+	\end{tabular}
+\end{table*}
+
 
 In modern day, the traveling salesman problem has a variety of applications to numerous fields. Examples among
 these applications include genome sequencing, air traffic control, supplying manufacturing lines, and optimization.
